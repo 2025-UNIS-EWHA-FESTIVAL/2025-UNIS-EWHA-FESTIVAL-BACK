@@ -24,15 +24,16 @@ jobs:
     - name: List build/libs contents
       run: ls -al build/libs
 
+    - name: Print exact JAR file
+      run: find build/libs -name "*.jar"
+
     - name: Copy files to EC2
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: |
-          build/libs/2025-unis-fest-back-0.0.1-SNAPSHOT.jar
-          Dockerfile
+        source: "build/libs/2025-unis-fest-back-0.0.1-SNAPSHOT.jar,Dockerfile"
         target: "/home/ec2-user/app"
 
     - name: SSH into EC2 and deploy
