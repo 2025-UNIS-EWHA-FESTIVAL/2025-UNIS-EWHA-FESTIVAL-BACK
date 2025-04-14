@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>당첨자 명단</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1>🎉 UNIS FESTIVAL 당첨자 리스트</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>순번</th>
+        <th>응모 시간</th>
+        <th>전화번호</th>
+        <th>상품명</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="winner : ${drawList}">
+        <td th:text="${winner.orderNumber}">1</td>
+        <td th:text="${#temporals.format(winner.entryTime, 'yyyy-MM-dd HH:mm:ss')}">2025-04-14</td>
+        <td th:text="${winner.phoneNumber}">01012345678</td>
+        <td th:text="${winner.prize}">스타벅스</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
