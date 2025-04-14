@@ -46,4 +46,8 @@ jobs:
           cd /home/ec2-user/app
           docker rm -f unis-app || true
           docker build -t unis-fest-back .
-          docker run -d -p 8080:8080 --name unis-app unis-fest-back
+          docker run -d \
+            -e DB_URL="${{ secrets.DB_URL }}" \
+            -e DB_USERNAME="${{ secrets.DB_USER }}" \
+            -e DB_PASSWORD="${{ secrets.DB_PASS }}" \
+            -p 8080:8080 --name unis-app unis-fest-back
