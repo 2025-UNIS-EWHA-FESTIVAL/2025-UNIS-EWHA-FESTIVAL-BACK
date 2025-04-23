@@ -25,8 +25,8 @@ public class DrawService {
         User saved = userRepository.save(user);
 
         DrawResponseDto response = new DrawResponseDto(saved.getOrderNumber(), null, null);
-        if (winningEntryRepository.existsByUser_OrderNumber(saved.getOrderNumber())) {
-            WinningEntry winningEntry = winningEntryRepository.findByUser_OrderNumber(saved.getOrderNumber());
+        if (winningEntryRepository.existsByUserId(saved.getOrderNumber())) {
+            WinningEntry winningEntry = winningEntryRepository.findByUserId(saved.getOrderNumber());
             response.setIsWinner(true);
             response.setPrize(winningEntry.getPrizeName());
         }
@@ -48,7 +48,7 @@ public class DrawService {
         ArrayList<User> users = userRepository.findTop10ByEntryTimeNotNullOrderByEntryTimeDesc();
         ArrayList<ResultDto> responses = new ArrayList<>();
         for (User user : users) {
-            WinningEntry winningEntry = winningEntryRepository.findByUser_OrderNumber(user.getOrderNumber());
+            WinningEntry winningEntry = winningEntryRepository.findByUserId(user.getOrderNumber());
             responses.add(new ResultDto(
                     user.getCollegeName(),
                     winningEntry.getPrizeName(),

@@ -12,9 +12,8 @@ public class WinningEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
-    @JoinColumn(name = "user_order_number", referencedColumnName = "order_number")
-    private User user;
+    @Column(name = "user_id")
+    private Integer userId;
 
     @Column(name = "prize_name", length = 100)
     private String prizeName;
