@@ -74,10 +74,10 @@ public class GlobalExceptionHandler {
 
     // 500 Internal Server Error (서버 내부 오류)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGeneralException(HttpServletRequest request, Exception ex) {
+    public ResponseEntity<ApiResponse<Void>> handleGeneralException(HttpServletRequest request, Exception ex) throws Exception {
         String uri = request.getRequestURI();
-        if (uri.equals("/") || uri.startsWith("/actuator")) {
-            throw new RuntimeException(ex);  // 이 방식은 throws 선언 필요 없음
+        if (uri.startsWith("/actuator")) {
+            throw ex;  // actuator만 예외를 넘긴다
         }
 
         return ResponseEntity.status(500)
