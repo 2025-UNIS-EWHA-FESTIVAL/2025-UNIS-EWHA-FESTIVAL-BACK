@@ -1,6 +1,7 @@
 package com.example.__unis_fest_back.global;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -72,9 +73,12 @@ public class GlobalExceptionHandler {
 
     // 500 Internal Server Error (서버 내부 오류)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception e) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 내부 오류가 발생했습니다."));
+    public ResponseEntity<ApiResponse<Void>> handleGeneralException(HttpServletRequest request, Exception ex) {
+        if (request.getRequestURI().startsWith("/actuator")) {
+            return ResponseEntity.status(500).build(); // Actuator 요청은 별도로 건드리지 않음
+        }
+
+        return ResponseEntity.status(500).body(ApiResponse.error(500, "서버 내부 오류가 발생했습니다."));
     }
+
 }
