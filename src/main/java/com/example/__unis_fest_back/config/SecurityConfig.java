@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/draw/**").permitAll()     // 누구나 접근 가능
+                        .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/admin/**").authenticated()
                         .anyRequest().permitAll()                        // 나머지는 허용
                 )
