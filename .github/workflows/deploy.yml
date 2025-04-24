@@ -49,15 +49,4 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker stop unis-app || true
-            docker rm unis-app || true
-            docker pull 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
-            docker run -d \
-              --name unis-app \
-              -p 8080:8080 \
-              -e DB_URL=${{ secrets.DB_URL }} \
-              -e DB_USERNAME=${{ secrets.DB_USER }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASS }} \
-              -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
-              -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
-              154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
+            bash ~/deploy.sh
