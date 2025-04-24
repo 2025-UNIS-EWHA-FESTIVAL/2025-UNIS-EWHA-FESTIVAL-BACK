@@ -74,11 +74,12 @@ public class GlobalExceptionHandler {
     // 500 Internal Server Error (서버 내부 오류)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(HttpServletRequest request, Exception ex) {
+        // Actuator health check 요청은 무시하고 Spring 기본 처리로 넘기기
         if (request.getRequestURI().startsWith("/actuator")) {
-            return ResponseEntity.status(500).build(); // Actuator 요청은 별도로 건드리지 않음
+            throw new RuntimeException(ex);  // 💡 예외 재던지기 → Spring Actuator가 자체 응답 처리함
         }
 
-        return ResponseEntity.status(500).body(ApiResponse.error(500, "서버 내부 오류가 발생했습니다."));
+        return ResponseEntity.status(500)
+                .body(ApiResponse.error(500, "서버 내부 오류가 발생했습니다."));
     }
-
 }
