@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to ECR
 
 on:
   push:
@@ -9,47 +9,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Build without test
-      run: ./gradlew build -x test
+      - name: Build without test
+        run: ./gradlew build -x test
 
-    - name: List build/libs contents
-      run: ls -al build/libs
+      - name: Log in to ECR
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Print exact JAR file
-      run: find build/libs -name "*.jar"
-
-    - name: Copy files to EC2
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        source: "build/libs/2025-unis-fest-back-0.0.1-SNAPSHOT.jar,Dockerfile"
-        target: "/home/ec2-user/app"
-
-    - name: SSH into EC2 and deploy
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd /home/ec2-user/app
-          docker rm -f unis-app || true
-          docker build -t unis-fest-back .
-          docker run -d \
-          -e DB_URL="${{ secrets.DB_URL }}" \
-          -e DB_USERNAME="${{ secrets.DB_USER }}" \
-          -e DB_PASSWORD="${{ secrets.DB_PASS }}" \
-          -e ADMIN_USERNAME="${{ secrets.ADMIN_USERNAME }}" \
-          -e ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}" \
-          -p 8080:8080 --name unis-app unis-fest-back
+      - name: Build and push to ECR
+        run: |
+          IMAGE_URI=154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
