@@ -5,6 +5,7 @@ import com.example.__unis_fest_back.dto.ResultDto;
 import com.example.__unis_fest_back.dto.WinRequestDto;
 import com.example.__unis_fest_back.global.ApiResponse;
 import com.example.__unis_fest_back.service.DrawService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class DrawController {
     }
 
     @PostMapping("/win")
-    public ResponseEntity<ApiResponse<?>> win(@RequestBody WinRequestDto request){
+    public ResponseEntity<ApiResponse<?>> win(@Valid @RequestBody WinRequestDto request){
         drawService.win(request);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
