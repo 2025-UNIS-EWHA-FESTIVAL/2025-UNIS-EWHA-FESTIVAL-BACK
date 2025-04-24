@@ -41,3 +41,12 @@ jobs:
           IMAGE_URI=154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            bash ~/deploy.sh
