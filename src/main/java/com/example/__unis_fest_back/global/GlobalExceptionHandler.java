@@ -2,6 +2,7 @@ package com.example.__unis_fest_back.global;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -74,9 +75,9 @@ public class GlobalExceptionHandler {
     // 500 Internal Server Error (서버 내부 오류)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(HttpServletRequest request, Exception ex) {
-        // Actuator health check 요청은 무시하고 Spring 기본 처리로 넘기기
-        if (request.getRequestURI().startsWith("/actuator")) {
-            throw new RuntimeException(ex);  // 💡 예외 재던지기 → Spring Actuator가 자체 응답 처리함
+        String uri = request.getRequestURI();
+        if (uri.equals("/") || uri.startsWith("/actuator")) {
+            throw new RuntimeException(ex);  // 이 방식은 throws 선언 필요 없음
         }
 
         return ResponseEntity.status(500)
