@@ -51,17 +51,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/**") // 모든 요청을 필터링 대상으로 지정
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 적용
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/draw/**").permitAll()     // 누구나 접근 가능
+                        .requestMatchers("/api/draw/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/admin/**").authenticated()
-                        .anyRequest().permitAll()                        // 나머지는 허용
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // ✅ OPTIONS 요청 무조건 허용
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
-                        .defaultSuccessUrl("/admin/", true) // 로그인 성공 후 무조건 /admin으로 이동
+                        .defaultSuccessUrl("/admin/", true)
+                        .permitAll()  // ✅ 로그인 페이지 자체는 모든 사용자 허용
                 )
                 .logout(Customizer.withDefaults())
                 .build();
