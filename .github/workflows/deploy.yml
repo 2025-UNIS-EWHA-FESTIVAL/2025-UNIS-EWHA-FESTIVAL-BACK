@@ -55,6 +55,7 @@ jobs:
             docker rm unis-app || true
 
             echo "Pulling latest image..."
+            docker rmi 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest || true
             docker pull 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
 
             echo "Running new container..."
