@@ -86,7 +86,7 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(
                 User.builder()
                         .username(adminUsername)
-                        .password(passwordEncoder.encode(adminPassword))
+                        .password(adminPassword)
                         .roles("ADMIN")
                         .build()
         );
