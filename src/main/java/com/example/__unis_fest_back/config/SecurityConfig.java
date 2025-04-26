@@ -40,7 +40,7 @@ public class SecurityConfig {
                 "https://2025-unis-festival.vercel.app",
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "https://www.2025-unis-fest-back.site")); // 허용할 origin
+                "https://2025-unis-fest-back.site")); // 허용할 origin
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
