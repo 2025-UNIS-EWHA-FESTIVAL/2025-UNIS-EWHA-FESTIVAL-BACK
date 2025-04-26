@@ -42,17 +42,30 @@ jobs:
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
+      # ✅ EC2 접속해서 컨테이너 멈추고 새로 실행
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            DB_URL="${{ secrets.DB_URL }}" \
-            DB_USERNAME="${{ secrets.DB_USERNAME }}" \
-            DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-            ADMIN_USERNAME="${{ secrets.ADMIN_USERNAME }}" \
-            ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}" \
-            bash /home/ec2-user/deploy.sh
+            echo "Stopping existing container..."
+            docker stop unis-app || true
+            docker rm unis-app || true
+
+            echo "Pulling latest image..."
+            docker pull 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
+
+            echo "Running new container..."
+            docker run -d \
+              --name unis-app \
+              -p 80:8080 \
+              -e DB_URL=${{ secrets.DB_URL }} \
+              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
+              -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
+              154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
+
+            echo "Deployment finished!"
