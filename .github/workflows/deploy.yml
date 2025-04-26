@@ -50,23 +50,24 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "Stopping existing container..."
+            echo "Stopping and removing existing container..."
             docker stop unis-app || true
             docker rm unis-app || true
-
+            
+            echo "Cleaning up images..."
+            docker rmi 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest || true
+            docker system prune -af || true   # ❗ dangled 이미지/컨테이너까지 완전 청소
+            
             echo "Pulling latest image..."
-            docker image inspect 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest && docker rmi 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest || true
             docker pull 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
-
+            
             echo "Running new container..."
             docker run -d \
-              --name unis-app \
-              -p 80:8080 \
-              -e DB_URL=${{ secrets.DB_URL }} \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
-              -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
-              154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
-
-            echo "Deployment finished!"
+            --name unis-app \
+            -p 80:8080 \
+            -e DB_URL=${{ secrets.DB_URL }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
+            -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
+            154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
