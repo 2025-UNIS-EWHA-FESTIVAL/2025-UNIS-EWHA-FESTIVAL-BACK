@@ -65,7 +65,6 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
                         .loginProcessingUrl("/login") // POST /login을 통해 인증
                         .defaultSuccessUrl("/admin/", true)
                         .permitAll()
