@@ -34,14 +34,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // OPTIONS 포함
         config.setAllowedOriginPatterns(Arrays.asList(
                 "https://2025-unis-festival.vercel.app",
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "https://2025-unis-fest-back.site")); // 허용할 origin
+                "https://2025-unis-fest-back.site"
+        ));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -58,13 +60,17 @@ public class SecurityConfig {
                         .requestMatchers("/api/draw/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/admin/**").authenticated()
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // ✅ OPTIONS 요청 무조건 허용
+                        .requestMatchers("/login").permitAll() // 로그인 페이지 요청 허용
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login") // POST /login을 통해 인증
                         .defaultSuccessUrl("/admin/", true)
-                        .permitAll()  // ✅ 로그인 페이지 자체는 모든 사용자 허용
+                        .permitAll()
                 )
+
                 .logout(Customizer.withDefaults())
                 .build();
     }
