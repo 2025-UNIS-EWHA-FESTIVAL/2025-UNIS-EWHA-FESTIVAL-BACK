@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build without test
-        run: ./gradlew build -x test
+        run: ./gradlew clean build -x test
 
       # ✅ AWS 권한 설정
       - name: Configure AWS credentials
