@@ -56,7 +56,10 @@ jobs:
             
             echo "Cleaning up images..."
             docker rmi 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest || true
-            docker system prune -af || true   # ❗ dangled 이미지/컨테이너까지 완전 청소
+            docker system prune -af || true
+            
+            echo "Logging into Amazon ECR..."
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com
             
             echo "Pulling latest image..."
             docker pull 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
@@ -65,9 +68,9 @@ jobs:
             docker run -d \
             --name unis-app \
             -p 80:8080 \
-            -e DB_URL=${{ secrets.DB_URL }} \
-            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
-            -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
+            -e DB_URL=*** \
+            -e DB_USERNAME=*** \
+            -e DB_PASSWORD=*** \
+            -e ADMIN_USERNAME=*** \
+            -e ADMIN_PASSWORD=*** \
             154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
