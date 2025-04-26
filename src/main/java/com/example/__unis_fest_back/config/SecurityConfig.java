@@ -23,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -34,20 +36,14 @@ public class SecurityConfig {
     private String adminUsername;
 
     @Value("${admin.password}")
-    private String adminPassword;
+    private String adminPasswordBase64;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(Arrays.asList(
-                "https://2025-unis-festival.vercel.app",
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "https://2025-unis-fest-back.site"
-        ));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-Requested-With"));
+        config.setAllowedOriginPatterns(List.of("*"));  // **모든 오리진 허용 temporarily**
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
         config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -83,16 +79,17 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        String decodedPassword = new String(Base64.getDecoder().decode(adminPasswordBase64)).trim();
         log.info("✅ 등록된 ADMIN_USERNAME = {}", adminUsername);
-        log.info("✅ 등록된 ADMIN_PASSWORD (bcrypt) = {}", adminPassword);
+        log.info("✅ 등록된 ADMIN_PASSWORD (decoded bcrypt) = {}", decodedPassword);
+
         return new InMemoryUserDetailsManager(
                 User.builder()
                         .username(adminUsername)
-                        .password(adminPassword)
+                        .password(decodedPassword) // 디코딩된 bcrypt를 그대로 사용
                         .roles("ADMIN")
                         .build()
         );
     }
-
 }
 
