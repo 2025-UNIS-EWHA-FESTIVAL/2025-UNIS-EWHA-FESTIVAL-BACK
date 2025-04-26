@@ -53,23 +53,25 @@ jobs:
             echo "Stopping and removing existing container..."
             docker stop unis-app || true
             docker rm unis-app || true
-            
+
             echo "Cleaning up images..."
             docker rmi 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest || true
             docker system prune -af || true
-            
+
             echo "Logging into Amazon ECR..."
             aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com
-            
+
             echo "Pulling latest image..."
             docker pull 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
-            
+
             echo "Running new container..."
-            DB_URL="${{ secrets.DB_URL }}" \
-            DB_USERNAME="${{ secrets.DB_USERNAME }}" \
-            DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-            ADMIN_USERNAME="${{ secrets.ADMIN_USERNAME }}" \
-            ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}" \
+
+            DB_URL="${{ secrets.DB_URL }}"
+            DB_USERNAME="${{ secrets.DB_USERNAME }}"
+            DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            ADMIN_USERNAME="${{ secrets.ADMIN_USERNAME }}"
+            ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}"
+
             docker run -d \
             --name unis-app \
             -p 80:8080 \
