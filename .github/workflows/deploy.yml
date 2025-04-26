@@ -49,6 +49,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DB_URL,DB_USERNAME,DB_PASSWORD,ADMIN_USERNAME,ADMIN_PASSWORD
           script: |
             echo "Stopping and removing existing container..."
             docker stop unis-app || true
@@ -68,10 +69,10 @@ jobs:
             docker run -d \
             --name unis-app \
             -p 80:8080 \
-            -e DB_URL=${{ secrets.DB_URL }} \
-            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} \
-            -e ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} \
+            -e DB_URL=$DB_URL \
+            -e DB_USERNAME=$DB_USERNAME \
+            -e DB_PASSWORD=$DB_PASSWORD \
+            -e ADMIN_USERNAME=$ADMIN_USERNAME \
+            -e ADMIN_PASSWORD=$ADMIN_PASSWORD \
             154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
-
+    
