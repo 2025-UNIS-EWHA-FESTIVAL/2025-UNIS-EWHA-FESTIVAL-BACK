@@ -69,12 +69,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .loginProcessingUrl("/login") // POST /login을 통해 인증
-                        .defaultSuccessUrl("/admin/", true)
-                        .permitAll()
-                )
-
+                .formLogin(Customizer.withDefaults())
                 .logout(Customizer.withDefaults())
                 .build();
     }
