@@ -74,13 +74,16 @@ public class GlobalExceptionHandler {
 
     // 500 Internal Server Error (서버 내부 오류)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGeneralException(HttpServletRequest request, Exception ex) throws Exception {
-        String uri = request.getRequestURI();
-        if (uri.startsWith("/actuator")) {
-            throw ex;  // actuator만 예외를 넘긴다
-        }
+    public Object handleException(HttpServletRequest request, Exception ex) throws Exception {
+        String requestUri = request.getRequestURI();
 
-        return ResponseEntity.status(500)
-                .body(ApiResponse.error(500, "서버 내부 오류가 발생했습니다."));
+        if (requestUri.startsWith("/api/")) {
+            // API 요청일 때만 JSON으로 에러 응답
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(500, "서버 내부 오류가 발생했습니다."));
+        } else {
+            // 그 외 (뷰 요청)는 다시 예외를 던진다
+            throw ex;
+        }
     }
 }
