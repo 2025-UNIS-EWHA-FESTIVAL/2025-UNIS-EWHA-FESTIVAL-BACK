@@ -62,6 +62,7 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/admin/**").authenticated()
                         .requestMatchers("/login").permitAll() // 로그인 페이지 요청 허용
+                        .requestMatchers("/test").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().permitAll()
                 )
