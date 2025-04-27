@@ -72,9 +72,8 @@ jobs:
             docker run -d \
             --name unis-app \
             -p 80:8080 \
+            --env-file /home/ec2-user/admin.env \
             -e DB_URL=$DB_URL \
             -e DB_USERNAME=$DB_USERNAME \
             -e DB_PASSWORD=$DB_PASSWORD \
-            -e "ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}" \
-            -e "ADMIN_PASSWORD=$(echo ${{ secrets.ADMIN_PASSWORD }} | sed 's/[$]/\\$/g')" \
             154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
