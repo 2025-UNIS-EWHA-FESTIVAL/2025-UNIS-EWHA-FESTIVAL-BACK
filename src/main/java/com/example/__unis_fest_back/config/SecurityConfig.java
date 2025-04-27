@@ -58,56 +58,43 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("Starting security filter chain setup...");
-
-        return http
+        http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(e -> e
-                        // /admin/** → 로그인 페이지로
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint("/login"),
                                 new AntPathRequestMatcher("/admin/**")
                         )
-                        // /api/** → 401 JSON
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 new AntPathRequestMatcher("/api/**")
                         )
-                )                .sessionManagement(session -> {
-                    session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-                    log.info("Session creation policy set to ALWAYS.");
-                })
-                .authorizeHttpRequests(auth -> {
-                    auth
-                            .requestMatchers("/api/draw/**").permitAll()
-                            .requestMatchers("/health").permitAll()
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
-                            .requestMatchers("/login").permitAll()
-                            .requestMatchers("/test").permitAll()
-                            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                            .anyRequest().permitAll();
-                    log.info("Authorization rules applied.");
-                })
-                .requiresChannel(channel -> {
-                    channel
-                            .requestMatchers("/health").requiresInsecure()
-                            .anyRequest().requiresSecure();
-                    log.info("Channel security settings applied.");
-                })
+                )
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/draw/**").permitAll()
+                        .requestMatchers("/health").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/login", "/test").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .requiresChannel(channel -> channel
+                        .requestMatchers("/health").requiresInsecure()
+                        .anyRequest().requiresSecure()
+                )
                 .formLogin(form -> form
-                        .loginPage("/login")  // 로그인 페이지 URL
-                        .loginProcessingUrl("/login")  // 로그인 인증 POST 요청 처리 URL
-                        .defaultSuccessUrl("/admin/", true)  // 로그인 성공 후 리다이렉트 URL
-                        .successHandler(authenticationSuccessHandler())
-                        .failureHandler(authenticationFailureHandler())
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/admin/", true)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
-                .logout(logout -> {
-                    logout.logoutUrl("/logout");  // 로그아웃 URL 설정
-                    log.info("Logout URL set to /logout.");
-                })
-                .build();
+                .logout(logout -> logout.logoutUrl("/logout"))
+        ;
+        return http.build();
     }
 
     @Bean
