@@ -48,14 +48,11 @@ tasks.named('bootJar') {
 }
 
 bootJar {
-	from {
-		sourceSets.main.resources.srcDirs
-	}
-}
-
-bootJar {
 	from('src/main/resources/templates') {
 		into('templates')
+	}
+	from {
+		sourceSets.main.resources.srcDirs
 	}
 }
 
