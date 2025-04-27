@@ -67,6 +67,12 @@ public class SecurityConfig {
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 new AntPathRequestMatcher("/api/**")
                         )
+                        // /admin (no slash)
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new AntPathRequestMatcher("/admin")
+                        )
+                        // /admin/** (with slash)
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint("/login"),
                                 new AntPathRequestMatcher("/admin/**")
