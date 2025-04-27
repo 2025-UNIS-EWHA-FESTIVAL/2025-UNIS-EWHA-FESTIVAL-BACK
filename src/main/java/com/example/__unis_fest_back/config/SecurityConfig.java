@@ -89,14 +89,13 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        String decodedPassword = new String(Base64.getDecoder().decode(adminPasswordBase64)).trim();
         log.info("✅ 등록된 ADMIN_USERNAME = {}", adminUsername);
-        log.info("✅ 등록된 ADMIN_PASSWORD (decoded bcrypt) = {}", decodedPassword);
+        log.info("✅ 등록된 ADMIN_PASSWORD (already bcrypt) = {}", adminPasswordBase64); // 이제 그냥 저장된 값 사용
 
         return new InMemoryUserDetailsManager(
                 User.builder()
                         .username(adminUsername)
-                        .password(decodedPassword) // 디코딩된 bcrypt를 그대로 사용
+                        .password(adminPasswordBase64) // 암호화 없이 바로 사용
                         .roles("ADMIN")
                         .build()
         );
