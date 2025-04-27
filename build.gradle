@@ -42,3 +42,14 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+	dependsOn processResources
+}
+
+bootJar {
+	from {
+		sourceSets.main.resources.srcDirs
+	}
+}
+
