@@ -20,7 +20,7 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public String getDrawInfo(Model model) {
         List<DrawInfoDto> responses = adminService.getDrawInfo();
         model.addAttribute("drawList", responses); // 뷰에서 사용할 이름
