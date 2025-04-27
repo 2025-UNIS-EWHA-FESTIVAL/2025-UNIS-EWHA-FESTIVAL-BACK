@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/draw/**").permitAll()
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/health").permitAll()
                         .requestMatchers("/admin/**").authenticated()
                         .requestMatchers("/login").permitAll() // 로그인 페이지 요청 허용
                         .requestMatchers("/test").permitAll()
