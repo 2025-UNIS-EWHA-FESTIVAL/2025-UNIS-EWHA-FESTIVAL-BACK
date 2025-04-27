@@ -67,6 +67,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .requiresChannel(channel -> channel
+                        .requestMatchers("/health").requiresInsecure()
                         .anyRequest().requiresSecure()
                 )
                 .formLogin(form -> form
