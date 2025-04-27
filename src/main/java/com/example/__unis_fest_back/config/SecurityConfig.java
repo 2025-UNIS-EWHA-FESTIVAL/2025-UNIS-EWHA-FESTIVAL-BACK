@@ -85,7 +85,12 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/admin", true)
-                        .failureUrl("/login?error")
+                        .failureHandler((req, res, ex) -> {
+                            // 실패 이유를 로그로 찍고
+                            log.error("로그인 실패: {}", ex.getMessage());
+                            // 원래 하던 대로 리다이렉트
+                            res.sendRedirect("/login?error");
+                        })
                         .permitAll()
                 )
                 // 로그아웃
