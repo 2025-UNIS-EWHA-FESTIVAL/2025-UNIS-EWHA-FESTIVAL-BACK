@@ -100,10 +100,5 @@ public class SecurityConfig {
                         .build()
         );
     }
-
-    @Bean
-    public ForwardedHeaderFilter forwardedHeaderFilter() {
-        return new ForwardedHeaderFilter();
-    }
 }
 

@@ -9,10 +9,7 @@ import org.springframework.web.filter.ForwardedHeaderFilter;
 public class ForwardedHeaderConfig {
 
     @Bean
-    public FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
-        FilterRegistrationBean<ForwardedHeaderFilter> bean = new FilterRegistrationBean<>();
-        bean.setFilter(new ForwardedHeaderFilter());
-        bean.setOrder(0); // 필터 체인에서 가장 먼저 실행되게 설정 (선택사항)
-        return bean;
+    public ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
     }
 }
