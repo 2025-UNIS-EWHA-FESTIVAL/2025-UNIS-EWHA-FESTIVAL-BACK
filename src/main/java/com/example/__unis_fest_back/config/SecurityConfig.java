@@ -60,24 +60,6 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                // 1) api/** 는 401 JSON
-                // 2) admin/** 은 로그인 폼으로
-                .exceptionHandling(ex -> ex
-                        .defaultAuthenticationEntryPointFor(
-                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                                new AntPathRequestMatcher("/api/**")
-                        )
-                        // /admin (no slash)
-                        .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint("/login"),
-                                new AntPathRequestMatcher("/admin")
-                        )
-                        // /admin/** (with slash)
-                        .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint("/login"),
-                                new AntPathRequestMatcher("/admin/**")
-                        )
-                )
                 // 세션은 기본 IF_REQUIRED
                 .sessionManagement(sm -> sm
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
@@ -94,10 +76,8 @@ public class SecurityConfig {
                         .requestMatchers("/health").requiresInsecure()
                         .anyRequest().requiresSecure()
                 )
-                // 폼 로그인
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/admin", true)
                         .failureUrl("/login?error")
                         .permitAll()
