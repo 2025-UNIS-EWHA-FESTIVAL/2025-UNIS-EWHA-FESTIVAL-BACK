@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class HealthController {
 
-    @GetMapping("/")
+    @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("OK");
     }
