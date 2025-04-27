@@ -51,8 +51,4 @@ bootJar {
 	from('src/main/resources/templates') {
 		into('templates')
 	}
-	from {
-		sourceSets.main.resources.srcDirs
-	}
 }
-
