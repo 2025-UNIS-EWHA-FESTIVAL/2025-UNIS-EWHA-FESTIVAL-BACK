@@ -53,3 +53,9 @@ bootJar {
 	}
 }
 
+bootJar {
+	from('src/main/resources/templates') {
+		into('templates')
+	}
+}
+
