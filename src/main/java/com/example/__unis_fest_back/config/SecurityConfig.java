@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .sessionManagement(session -> {
-                    session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
+                    session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
                     log.info("Session creation policy set to ALWAYS.");
                 })
                 .authorizeHttpRequests(auth -> {
