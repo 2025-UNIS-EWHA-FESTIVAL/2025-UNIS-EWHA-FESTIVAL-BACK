@@ -70,7 +70,7 @@ public class SecurityConfig {
                     auth
                             .requestMatchers("/api/draw/**").permitAll()
                             .requestMatchers("/health").permitAll()
-                            .requestMatchers("/admin/**").authenticated()
+                            .requestMatchers("/admin/**").hasRole("ADMIN")
                             .requestMatchers("/login").permitAll()
                             .requestMatchers("/test").permitAll()
                             .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
