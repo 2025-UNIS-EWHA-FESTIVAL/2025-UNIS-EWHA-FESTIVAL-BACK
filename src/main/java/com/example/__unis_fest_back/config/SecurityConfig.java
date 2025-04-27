@@ -41,19 +41,23 @@ public class SecurityConfig {
     private String adminUsername;
 
     @Value("${admin.password}")
-    private String adminPasswordBase64;
+    private String adminPassword;  // 이미 BCrypt로 저장된 값
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
+        src.registerCorsConfiguration("/**", config);
+        return src;
+    }
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
+    @Bean
+    public ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
     }
 
     @Bean
@@ -61,30 +65,35 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .exceptionHandling(e -> e
-                        .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint("/login"),
-                                new AntPathRequestMatcher("/admin/**")
-                        )
+                // 1) api/** 는 401 JSON
+                // 2) admin/** 은 로그인 폼으로
+                .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 new AntPathRequestMatcher("/api/**")
                         )
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new AntPathRequestMatcher("/admin/**")
+                        )
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                // 세션은 기본 IF_REQUIRED
+                .sessionManagement(sm -> sm
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .authorizeHttpRequests(auth -> auth
+                // 권한 설정
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login", "/logout", "/test", "/health").permitAll()
                         .requestMatchers("/api/draw/**").permitAll()
-                        .requestMatchers("/health").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/login", "/test").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
-                .requiresChannel(channel -> channel
+                // HTTPS 강제화
+                .requiresChannel(ch -> ch
                         .requestMatchers("/health").requiresInsecure()
                         .anyRequest().requiresSecure()
                 )
+                // 폼 로그인
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -92,54 +101,29 @@ public class SecurityConfig {
                         .failureUrl("/login?error")
                         .permitAll()
                 )
-                .logout(logout -> logout.logoutUrl("/logout"))
+                // 로그아웃
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                )
         ;
+
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        log.info("Initializing password encoder.");
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        log.info("Configuring user details service for admin.");
-        log.info("✅ Registered ADMIN_USERNAME = {}", adminUsername);
-        log.info("✅ Registered ADMIN_PASSWORD (already bcrypt) = {}", adminPasswordBase64);
-
+    public UserDetailsService userDetailsService(PasswordEncoder pwEnc) {
+        // adminPassword에는 이미 BCrypt 해시가 담겨 있다고 가정
         return new InMemoryUserDetailsManager(
-                User.builder()
-                        .username(adminUsername)
-                        .password(adminPasswordBase64)  // Base64로 제공된 패스워드 직접 사용
+                User.withUsername(adminUsername)
+                        .password(adminPassword)
                         .roles("ADMIN")
                         .build()
         );
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        log.info("Authentication Manager initialized.");
-        return authenticationManager;
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        log.info("Configuring authentication success handler.");
-        return (request, response, authentication) -> {
-            log.info("Login successful for user: {}", authentication.getName());
-            response.sendRedirect("/admin/");
-        };
-    }
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        log.error("Login failed. Incorrect credentials or other issue.");
-        return (request, response, exception) -> {
-            log.error("Login attempt failed. Reason: {}", exception.getMessage());
-            response.sendRedirect("/login?error");
-        };
     }
 }
