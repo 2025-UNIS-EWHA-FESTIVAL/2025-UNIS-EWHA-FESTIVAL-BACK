@@ -74,10 +74,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // HTTPS 강제화
-                .requiresChannel(ch -> ch
-                        .requestMatchers("/health").requiresInsecure()
-                        .anyRequest().requiresSecure()
-                )
+//                .requiresChannel(ch -> ch
+//                        .requestMatchers("/health").requiresInsecure()
+//                        .anyRequest().requiresSecure()
+//                )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/admin", true)
