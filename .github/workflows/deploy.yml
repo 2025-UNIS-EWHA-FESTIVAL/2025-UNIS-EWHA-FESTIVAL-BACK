@@ -76,5 +76,5 @@ jobs:
             -e DB_USERNAME=$DB_USERNAME \
             -e DB_PASSWORD=$DB_PASSWORD \
             -e "ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}" \
-            -e "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" \
+            -e "ADMIN_PASSWORD=$(echo ${{ secrets.ADMIN_PASSWORD }} | sed 's/[$]/\\$/g')" \
             154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
