@@ -15,5 +15,6 @@ public class DrawInfoDto {
     private Integer orderNumber;
     private LocalDateTime entryTime;
     private String phoneNumber;
+    private String college;
     private String prize;
 }

@@ -25,7 +25,7 @@ public class User {
     @Column(name = "phone_number", length = 11)
     private String phoneNumber;
 
-    @Column(name = "review_text", columnDefinition = "TINYTEXT")
+    @Column(name = "review_text", length = 50)
     private String reviewText;
 
     @Column(name = "college_name", length = 20)

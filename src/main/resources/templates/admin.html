@@ -14,6 +14,7 @@
         <th>No</th>
         <th>Time Slot</th>
         <th>Phone</th>
+        <th>College</th>
         <th>Prize</th>
     </tr>
     </thead>
@@ -22,6 +23,7 @@
         <td th:text="${winner.orderNumber}">1</td>
         <td th:text="${#temporals.format(winner.entryTime, 'yyyy-MM-dd HH:mm:ss')}">2025-04-14</td>
         <td th:text="${winner.phoneNumber}">01012345678</td>
+        <td th:text="${winner.college}">엘텍공과대학</td>
         <td th:text="${winner.prize}">스타벅스</td>
     </tr>
     </tbody>

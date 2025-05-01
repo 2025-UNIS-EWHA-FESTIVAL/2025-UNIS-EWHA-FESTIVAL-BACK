@@ -25,6 +25,6 @@ public class WinRequestDto {
     @Pattern(regexp = "^\\d{11}$", message = "전화번호는 숫자만 포함하며 11자리여야 합니다.")
     private String phoneNumber;
 
-    @Size(max = 255, message = "후기 내용은 255자 이하로 작성해주세요.")
+    @Size(max = 50, message = "후기 내용은 50자 이하로 작성해주세요.")
     private String reviewText;
 }

@@ -25,6 +25,7 @@ public class AdminService {
                     user.getOrderNumber(),
                     user.getEntryTime(),
                     user.getPhoneNumber(),
+                    user.getCollegeName(),
                     winningEntry.getPrizeName()
             ));
         }
