@@ -17,7 +17,7 @@ public class AdminService {
     private final WinningEntryRepository winningEntryRepository;
 
     public ArrayList<DrawInfoDto> getDrawInfo() {
-        ArrayList<User> users = userRepository.findByEntryTimeNotNullOrderByEntryTimeDesc();
+        ArrayList<User> users = userRepository.findByEntryTimeNotNullOrderByEntryTimeAsc();
         ArrayList<DrawInfoDto> responses = new ArrayList<>();
         for (User user : users) {
             WinningEntry winningEntry = winningEntryRepository.findByUserId(user.getOrderNumber());
