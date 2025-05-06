@@ -83,7 +83,11 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                                new AntPathRequestMatcher("/api/**") // ✅ 리다이렉션 막기
+                                new AntPathRequestMatcher("/api/**") // API 요청 → 401
+                        )
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new AntPathRequestMatcher("/admin/**") // 관리자 페이지 요청 → /login 리디렉션
                         )
                 )
                 // HTTPS 강제화
