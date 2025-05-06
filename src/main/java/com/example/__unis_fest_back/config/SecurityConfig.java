@@ -93,7 +93,7 @@ public class SecurityConfig {
                         // 로그인폼, 로그인 처리, 관리자 페이지만 HTTPS로 강제
                         .requestMatchers("/login", "/login?error", "/admin**").requiresSecure()
                         // 나머지는 아무 제한 없이
-                        .anyRequest().requiresInsecure()
+                        .anyRequest().requiresSecure()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
