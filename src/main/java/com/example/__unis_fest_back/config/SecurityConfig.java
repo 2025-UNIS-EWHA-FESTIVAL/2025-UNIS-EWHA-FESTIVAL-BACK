@@ -95,7 +95,7 @@ public class SecurityConfig {
                         // health는 여전히 HTTP만 허용
                         .requestMatchers("/health").requiresInsecure()
                         // 로그인폼, 로그인 처리, 관리자 페이지만 HTTPS로 강제
-                        .requestMatchers("/login", "/login?error", "/admin**").requiresSecure()
+                        .requestMatchers("/login", "/login/**","/login?error", "/admin", "/admin**").requiresSecure()
                         // 나머지는 아무 제한 없이
                         .anyRequest().requiresSecure()
                 )
