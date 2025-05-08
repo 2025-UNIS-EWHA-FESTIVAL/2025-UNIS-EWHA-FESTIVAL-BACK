@@ -1,4 +1,4 @@
-name: Deploy to ECR
+name: Deploy to ECR and EC2
 
 on:
   push:
@@ -21,7 +21,6 @@ jobs:
       - name: Build without test
         run: ./gradlew clean build -x test
 
-      # ✅ AWS 권한 설정
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -29,25 +28,40 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      # ✅ ECR 로그인
       - name: Log in to ECR
         uses: aws-actions/amazon-ecr-login@v1
         with:
           aws-region: ap-northeast-2
 
-      # ✅ Docker 이미지 빌드 + 푸시
-      - name: Build and push to ECR
+      - name: Build and push Docker image to ECR
         run: |
           IMAGE_URI=154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
-      # ✅ SSM으로 모든 EC2 인스턴스에 deploy.sh 실행
-      - name: Deploy to all EC2 via SSM
+      # ✅ 민감정보 포함한 admin.env 생성 (Secrets 기반, 안전)
+      - name: Upload admin.env to EC2 via SSM (secure)
         run: |
           aws ssm send-command \
             --document-name "AWS-RunShellScript" \
             --targets "Key=tag:Role,Values=unis-auto-scaling" \
-            --comment "Deploy latest Docker image to all EC2" \
+            --comment "Create secure admin.env on EC2" \
+            --parameters 'commands=[
+              "echo \"DB_URL=${{ secrets.DB_URL }}\" > /home/ec2-user/admin.env",
+              "echo \"DB_USERNAME=${{ secrets.DB_USERNAME }}\" >> /home/ec2-user/admin.env",
+              "echo \"DB_PASSWORD=${{ secrets.DB_PASSWORD }}\" >> /home/ec2-user/admin.env",
+              "chmod 600 /home/ec2-user/admin.env",
+              "chown ec2-user:ec2-user /home/ec2-user/admin.env"
+            ]' \
+            --region ap-northeast-2
+
+      # ✅ deploy.sh 실행 (이미 AMI에 포함되어 있음)
+      - name: Deploy container via deploy.sh
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=tag:Role,Values=unis-auto-scaling" \
+            --comment "Deploy latest Docker image" \
             --parameters 'commands=["bash /home/ec2-user/deploy.sh"]' \
             --region ap-northeast-2
+          
