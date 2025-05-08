@@ -50,6 +50,8 @@ jobs:
               "echo \"DB_URL=${{ secrets.DB_URL }}\" > /home/ec2-user/admin.env",
               "echo \"DB_USERNAME=${{ secrets.DB_USERNAME }}\" >> /home/ec2-user/admin.env",
               "echo \"DB_PASSWORD=${{ secrets.DB_PASSWORD }}\" >> /home/ec2-user/admin.env",
+              "echo \"ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}\" >> /home/ec2-user/admin.env",
+              "echo \"ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}\" >> /home/ec2-user/admin.env",
               "chmod 600 /home/ec2-user/admin.env",
               "chown ec2-user:ec2-user /home/ec2-user/admin.env"
             ]' \
