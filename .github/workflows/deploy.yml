@@ -56,12 +56,19 @@ jobs:
             --region ap-northeast-2
 
       # ✅ deploy.sh 실행 (이미 AMI에 포함되어 있음)
-      - name: Deploy container via deploy.sh
+      - name: Deploy latest container directly via SSM (no deploy.sh)
         run: |
           aws ssm send-command \
             --document-name "AWS-RunShellScript" \
             --targets "Key=tag:Role,Values=unis-auto-scaling" \
-            --comment "Deploy latest Docker image" \
-            --parameters 'commands=["bash /home/ec2-user/deploy.sh"]' \
+            --comment "Run latest container directly via SSM" \
+            --parameters 'commands=[
+              "docker stop unis-app || true",
+              "docker rm unis-app || true",
+              "docker rmi 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest || true",
+              "docker system prune -af || true",
+              "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com",
+              "docker pull 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest",
+              "docker run --pull always -d --name unis-app -p 80:8080 --env-file /home/ec2-user/admin.env -e TZ=Asia/Seoul 154006474458.dkr.ecr.ap-northeast-2.amazonaws.com/unis-fest-back:latest"
+            ]' \
             --region ap-northeast-2
-          
