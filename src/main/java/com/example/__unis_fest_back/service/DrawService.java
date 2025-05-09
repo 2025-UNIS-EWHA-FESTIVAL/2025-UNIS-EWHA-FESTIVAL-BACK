@@ -21,7 +21,7 @@ public class DrawService {
     private final WinningEntryRepository winningEntryRepository;
 
     public DrawResponseDto enter() {
-        User user = new User(null, null, null, null, null);
+        User user = new User(null, null, null, null, null, null);
         User saved = userRepository.save(user);
 
         DrawResponseDto response = new DrawResponseDto(saved.getOrderNumber(), null, null);
@@ -41,6 +41,7 @@ public class DrawService {
         user.setPhoneNumber(request.getPhoneNumber());
         user.setReviewText(request.getReviewText());
         user.setEntryTime(LocalDateTime.now());
+        user.setPrizeName(winningEntryRepository.findByUserId(user.getOrderNumber()).getPrizeName());
         userRepository.save(user);
     }
 
@@ -48,10 +49,9 @@ public class DrawService {
         ArrayList<User> users = userRepository.findTop10ByEntryTimeNotNullOrderByEntryTimeDesc();
         ArrayList<ResultDto> responses = new ArrayList<>();
         for (User user : users) {
-            WinningEntry winningEntry = winningEntryRepository.findByUserId(user.getOrderNumber());
             responses.add(new ResultDto(
                     user.getCollegeName(),
-                    winningEntry.getPrizeName(),
+                    user.getPrizeName(),
                     user.getEntryTime(),
                     user.getReviewText()
             ));

@@ -20,13 +20,12 @@ public class AdminService {
         ArrayList<User> users = userRepository.findByEntryTimeNotNullOrderByEntryTimeAsc();
         ArrayList<DrawInfoDto> responses = new ArrayList<>();
         for (User user : users) {
-            WinningEntry winningEntry = winningEntryRepository.findByUserId(user.getOrderNumber());
             responses.add(new DrawInfoDto(
                     user.getOrderNumber(),
                     user.getEntryTime(),
                     user.getPhoneNumber(),
                     user.getCollegeName(),
-                    winningEntry.getPrizeName()
+                    user.getPrizeName()
             ));
         }
         return responses;

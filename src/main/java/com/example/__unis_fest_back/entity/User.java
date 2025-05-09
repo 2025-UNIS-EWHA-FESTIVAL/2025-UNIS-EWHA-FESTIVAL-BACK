@@ -30,4 +30,7 @@ public class User {
 
     @Column(name = "college_name", length = 20)
     private String collegeName;
+
+    @Column(name = "prize_name", length = 15)
+    private String prizeName;
 }
