@@ -52,6 +52,10 @@ jobs:
               "echo \"DB_PASSWORD=${{ secrets.DB_PASSWORD }}\" >> /home/ec2-user/admin.env",
               "echo \"ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}\" >> /home/ec2-user/admin.env",
               "echo \"ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}\" >> /home/ec2-user/admin.env",
+              "echo \"AWS_ACCESS_KEY=${{ secrets.AWS_S3_ACCESS_KEY_ID }}\" >> /home/ec2-user/admin.env",
+              "echo \"AWS_SECRET_KEY=${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}\" >> /home/ec2-user/admin.env",
+              "echo \"AWS_REGION=ap-northeast-2\" >> /home/ec2-user/admin.env",
+              "echo \"S3_BUCKET=${{ secrets.S3_BUCKET }}\" >> /home/ec2-user/admin.env",
               "chmod 600 /home/ec2-user/admin.env",
               "chown ec2-user:ec2-user /home/ec2-user/admin.env"
             ]' \
