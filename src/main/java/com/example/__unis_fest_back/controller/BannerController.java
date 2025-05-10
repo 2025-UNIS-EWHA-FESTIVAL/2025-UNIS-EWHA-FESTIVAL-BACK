@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @RestController
 @RequiredArgsConstructor
 public class BannerController {
-    private static S3Service s3Service;
+    private final S3Service s3Service;
 
     @GetMapping("/api/banner")
     public ResponseEntity<ApiResponse<?>> getBannerImages() {
