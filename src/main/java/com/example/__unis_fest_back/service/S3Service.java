@@ -19,7 +19,8 @@ public class S3Service {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    private String baseUrl = "https://" + bucket + ".s3.ap-northeast-2.amazonaws.com" ;
+    @Value("${cloud.aws.s3.base-url}")
+    private String baseUrl;
 
     public ArrayList<String> getAllImageUrls() {
         ArrayList<String> imageUrls = new ArrayList<>();

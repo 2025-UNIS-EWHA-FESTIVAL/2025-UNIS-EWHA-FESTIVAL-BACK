@@ -56,6 +56,7 @@ jobs:
               "echo \"AWS_SECRET_KEY=${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}\" >> /home/ec2-user/admin.env",
               "echo \"AWS_REGION=ap-northeast-2\" >> /home/ec2-user/admin.env",
               "echo \"S3_BUCKET=${{ secrets.S3_BUCKET }}\" >> /home/ec2-user/admin.env",
+              "echo \"S3_BUCKET_URL=${{ secrets.S3_BUCKET_URL }}\" >> /home/ec2-user/admin.env",
               "chmod 600 /home/ec2-user/admin.env",
               "chown ec2-user:ec2-user /home/ec2-user/admin.env"
             ]' \
