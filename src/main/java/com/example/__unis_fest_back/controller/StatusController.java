@@ -14,7 +14,7 @@ public class StatusController {
     public ResponseEntity<ApiResponse<?>> checkServerStatus() {
         LocalTime now = LocalTime.now();
 
-        if (now.isAfter(LocalTime.of(22, 59)) || now.isBefore(LocalTime.of(9, 0))) {
+        if (now.isAfter(LocalTime.of(22, 59)) || now.isBefore(LocalTime.of(10, 0))) {
             return ResponseEntity.ok(ApiResponse.success(false));
         }
         else return ResponseEntity.ok(ApiResponse.success(true));
