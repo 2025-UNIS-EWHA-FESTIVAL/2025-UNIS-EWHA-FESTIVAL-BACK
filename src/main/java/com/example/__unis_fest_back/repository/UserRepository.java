@@ -8,5 +8,5 @@ import java.util.ArrayList;
 public interface UserRepository extends JpaRepository<User, Integer> {
     ArrayList<User> findTop10ByEntryTimeNotNullOrderByEntryTimeDesc();
 
-    ArrayList<User> findByPhoneNumberNotNullOrderByUserIdAsc();
+    ArrayList<User> findByPhoneNumberNotNullOrderByOrderNumberAsc();
 }
